@@ -11,14 +11,13 @@
 
 namespace Symfony\Bundle\MessengerBundle;
 
-use Symfony\Bundle\MessengerBundle\DependencyInjection\Compiler\MessengerPass as BackportMessengerPass;
 use Symfony\Bundle\MessengerBundle\DependencyInjection\Compiler\MessengerReceiverPass;
 use Symfony\Bundle\MessengerBundle\DependencyInjection\Compiler\MessengerSenderPass;
 use Symfony\Bundle\MessengerBundle\DependencyInjection\Compiler\TransportFactoryPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\Component\HttpKernel\Kernel;
-use Symfony\Component\Messenger\DependencyInjection\MessengerPass as OriginalMessengerPass;
+use Symfony\Component\Messenger\DependencyInjection\MessengerPass;
 
 class MessengerBundle extends Bundle
 {
@@ -28,11 +27,7 @@ class MessengerBundle extends Bundle
 
         $container->addCompilerPass(new TransportFactoryPass());
 
-        $container->addCompilerPass(
-            version_compare(Kernel::VERSION, '3.3.0', '<')
-            ? new BackportMessengerPass()
-            : new OriginalMessengerPass()
-        );
+        $container->addCompilerPass(new MessengerPass());
         $container->addCompilerPass(new MessengerReceiverPass());
         $container->addCompilerPass(new MessengerSenderPass());
     }
